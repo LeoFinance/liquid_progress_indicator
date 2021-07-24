@@ -6,13 +6,15 @@ class Wave extends StatefulWidget {
   final double? value;
   final Color color;
   final Axis direction;
+  final double moveFactor;
 
-  const Wave({
-    Key? key,
-    required this.value,
-    required this.color,
-    required this.direction,
-  }) : super(key: key);
+  const Wave(
+      {Key? key,
+      required this.value,
+      required this.color,
+      required this.direction,
+      required this.moveFactor})
+      : super(key: key);
 
   @override
   _WaveState createState() => _WaveState();
@@ -50,10 +52,10 @@ class _WaveState extends State<Wave> with SingleTickerProviderStateMixin {
           color: widget.color,
         ),
         clipper: _WaveClipper(
-          animationValue: _animationController.value,
-          value: widget.value,
-          direction: widget.direction,
-        ),
+            animationValue: _animationController.value,
+            value: widget.value,
+            direction: widget.direction,
+            moveFactor: widget.moveFactor),
       ),
     );
   }
@@ -63,11 +65,13 @@ class _WaveClipper extends CustomClipper<Path> {
   final double animationValue;
   final double? value;
   final Axis direction;
+  final double moveFactor;
 
   _WaveClipper({
     required this.animationValue,
     required this.value,
     required this.direction,
+    required this.moveFactor
   });
 
   @override
@@ -94,7 +98,7 @@ class _WaveClipper extends CustomClipper<Path> {
     for (int i = -2; i <= size.height.toInt() + 2; i++) {
       final waveHeight = (size.width / 20);
       final dx = math.sin((animationValue * 360 - i) % 360 * (math.pi / 180)) *
-              waveHeight +
+              waveHeight / moveFactor +
           (size.width * value!);
       waveList.add(Offset(dx, i.toDouble()));
     }
